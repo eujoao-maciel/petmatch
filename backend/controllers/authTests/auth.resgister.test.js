@@ -1,9 +1,9 @@
-import { expect, describe, it, vi } from "vitest"
+import { expect, describe, it, vi, beforeEach } from "vitest"
 import request from "supertest"
-import app from "../app.js"
-import User from "../models/User.js"
+import app from "../../app.js"
+import User from "../../models/User.js"
 
-vi.mock("../models/User.js", () => ({
+vi.mock("../../models/User.js", () => ({
   default: {
     create: vi.fn(),
     findOne: vi.fn()
@@ -13,6 +13,10 @@ vi.mock("../models/User.js", () => ({
 const createMockUser = ({ id, ...mockUser }) => {
   User.create.mockResolvedValue({ id, ...mockUser })
 }
+
+beforeEach(() => {
+  vi.clearAllMocks()
+})
 
 describe("POST / register", async () => {
   it("Should return 400 if name is missing", async () => {
@@ -25,6 +29,7 @@ describe("POST / register", async () => {
     const res = await request(app).post("/auth/register").send(mockUser)
 
     expect(res.status).toBe(400)
+    expect(res.body).toHaveProperty("error")
   })
 
   it("Should return 400 if email is missing", async () => {
@@ -37,21 +42,52 @@ describe("POST / register", async () => {
     const res = await request(app).post("/auth/register").send(mockUser)
 
     expect(res.status).toBe(400)
+    expect(res.body).toHaveProperty("error")
+  })
+
+  it("Should return 400 if password is missing", async () => {
+    const mockUser = {
+      name: "test",
+      email: "test@examplo.com"
+    }
+
+    createMockUser({ id: 1, ...mockUser })
+    const res = await request(app).post("/auth/register").send(mockUser)
+
+    expect(res.status).toBe(400)
+    expect(res.body).toHaveProperty("error")
+  })
+
+  it("Should return 400 if password and confirm password do not match.", async () => {
+    const mockUser = {
+      name: "test",
+      email: "test@email.com",
+      password: "12345",
+      confirmpassword: "123"
+    }
+
+    createMockUser({ id: 1, ...mockUser })
+    const res = await request(app).post("/auth/register").send(mockUser)
+
+    expect(res.status).toBe(400)
+    expect(res.body).toHaveProperty("error")
   })
 
   it("Should return 409 if email already exists", async () => {
     const mockUser = {
       name: "test",
       email: "test@gmail.com",
-      password: "secret"
+      password: "secret",
+      confirmpassword: "secret"
     }
 
-    User.findOne.mockResolvedValue({ id: 1, ...mockUser })
+    User.findOne.mockResolvedValue({
+      email: "test@gmail.com"
+    })
 
     const res = await request(app).post("/auth/register").send(mockUser)
 
     expect(res.status).toBe(409)
-
     expect(res.body).toHaveProperty("error")
   })
 
@@ -59,7 +95,8 @@ describe("POST / register", async () => {
     const mockUser = {
       name: "test",
       email: "test@example.com",
-      password: "secret"
+      password: "secret",
+      confirmpassword: "secret"
     }
 
     User.findOne.mockResolvedValue(null)

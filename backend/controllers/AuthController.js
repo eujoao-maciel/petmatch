@@ -2,7 +2,7 @@ import User from "../models/User.js"
 import bcrypt from "bcrypt"
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body
+  const { name, email, password, confirmpassword } = req.body
 
   if (!name) {
     res.status(400).json({
@@ -24,6 +24,26 @@ export const register = async (req, res) => {
     return
   }
 
+  if (!password) {
+    res.status(400).json({
+      error: {
+        type: "ValidationError",
+        message: "The password field is required."
+      }
+    })
+    return
+  }
+
+  if (password !== confirmpassword) {
+    res.status(400).json({
+      error: {
+        type: "ValidationError",
+        message: "Password and confirm password do not match."
+      }
+    })
+    return
+  }
+
   const userAlreadyExists = await User.findOne({ where: { email } })
 
   if (userAlreadyExists) {
@@ -36,10 +56,13 @@ export const register = async (req, res) => {
     return
   }
 
+  const salt = await bcrypt.genSalt(12)
+  const passwordHash = await bcrypt.hash(password, salt)
+
   const user = {
     name,
     email,
-    password
+    password: passwordHash
   }
 
   try {
@@ -52,3 +75,4 @@ export const register = async (req, res) => {
     console.log(error)
   }
 }
+
