@@ -1,5 +1,6 @@
-import User from "../models/User.js"
-import bcrypt from "bcrypt"
+import User from '../models/User.js'
+import bcrypt from 'bcrypt'
+import generateToken from '../utils/generateToken.js'
 
 export const register = async (req, res) => {
   const { name, email, password, confirmpassword } = req.body
@@ -7,9 +8,9 @@ export const register = async (req, res) => {
   if (!name) {
     res.status(400).json({
       error: {
-        type: "ValidationError",
-        message: "The name field is required."
-      }
+        type: 'ValidationError',
+        message: 'The name field is required.',
+      },
     })
     return
   }
@@ -17,9 +18,9 @@ export const register = async (req, res) => {
   if (!email) {
     res.status(400).json({
       error: {
-        type: "ValidationError",
-        message: "The email field is required."
-      }
+        type: 'ValidationError',
+        message: 'The email field is required.',
+      },
     })
     return
   }
@@ -27,9 +28,9 @@ export const register = async (req, res) => {
   if (!password) {
     res.status(400).json({
       error: {
-        type: "ValidationError",
-        message: "The password field is required."
-      }
+        type: 'ValidationError',
+        message: 'The password field is required.',
+      },
     })
     return
   }
@@ -37,9 +38,9 @@ export const register = async (req, res) => {
   if (password !== confirmpassword) {
     res.status(400).json({
       error: {
-        type: "ValidationError",
-        message: "Password and confirm password do not match."
-      }
+        type: 'ValidationError',
+        message: 'Password and confirm password do not match.',
+      },
     })
     return
   }
@@ -49,9 +50,9 @@ export const register = async (req, res) => {
   if (userAlreadyExists) {
     res.status(409).json({
       error: {
-        type: "Conflict",
-        message: "Email is already in use."
-      }
+        type: 'Conflict',
+        message: 'Email is already in use.',
+      },
     })
     return
   }
@@ -62,17 +63,17 @@ export const register = async (req, res) => {
   const user = {
     name,
     email,
-    password: passwordHash
+    password: passwordHash,
   }
 
   try {
     const newUser = await User.create(user)
     res.status(201).json({
-      message: "User created successfully.",
-      data: { id: newUser.id, name: newUser.name, email: newUser.email }
+      message: 'User created successfully.',
+      data: { id: newUser.id, name: newUser.name, email: newUser.email },
+      token: generateToken(newUser.id),
     })
   } catch (error) {
     console.log(error)
   }
 }
-
