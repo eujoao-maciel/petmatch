@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 
 describe("POST / register", async () => {
-  it("Should return 400 if name is missing", async () => {
+  it("should return 400 if name is missing", async () => {
     const mockUser = {
       email: "test@example.com",
       password: "12345"
@@ -32,7 +32,7 @@ describe("POST / register", async () => {
     expect(res.body).toHaveProperty("error")
   })
 
-  it("Should return 400 if email is missing", async () => {
+  it("should return 400 if email is missing", async () => {
     const mockUser = {
       name: "test",
       password: "secret"
@@ -45,7 +45,7 @@ describe("POST / register", async () => {
     expect(res.body).toHaveProperty("error")
   })
 
-  it("Should return 400 if password is missing", async () => {
+  it("should return 400 if password is missing", async () => {
     const mockUser = {
       name: "test",
       email: "test@examplo.com"
@@ -58,7 +58,7 @@ describe("POST / register", async () => {
     expect(res.body).toHaveProperty("error")
   })
 
-  it("Should return 400 if password and confirm password do not match.", async () => {
+  it("should return 400 if password and confirm password do not match.", async () => {
     const mockUser = {
       name: "test",
       email: "test@email.com",
@@ -73,7 +73,7 @@ describe("POST / register", async () => {
     expect(res.body).toHaveProperty("error")
   })
 
-  it("Should return 409 if email already exists", async () => {
+  it("should return 409 if email already exists", async () => {
     const mockUser = {
       name: "test",
       email: "test@gmail.com",
@@ -91,7 +91,7 @@ describe("POST / register", async () => {
     expect(res.body).toHaveProperty("error")
   })
 
-  it("Should retund 201 if register a new user", async () => {
+  it("should retund 201 if register a new user", async () => {
     const mockUser = {
       name: "test",
       email: "test@example.com",

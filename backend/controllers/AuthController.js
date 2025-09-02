@@ -77,3 +77,56 @@ export const register = async (req, res) => {
     console.log(error)
   }
 }
+
+export const login = async (req, res) => {
+  const { email, password } = req.body
+
+  if (!email) {
+    res.status(400).json({
+      error: {
+        type: 'ValidationError',
+        message: 'The email field is required.',
+      },
+    })
+    return
+  }
+
+  if (!password) {
+    res.status(400).json({
+      error: {
+        type: 'ValidationError',
+        message: 'The password field is required.',
+      },
+    })
+    return
+  }
+
+  const user = await User.findOne({ where: { email: email } })
+
+  if (!user) {
+    res.status(404).json({
+      error: {
+        type: 'NotFound',
+        message: 'User not found',
+      },
+    })
+    return
+  }
+
+  const checkPassword = await bcrypt.compare(password, user.password)
+
+  if (!checkPassword) {
+    res.status(401).json({
+      error: {
+        type: 'Unauthorized',
+        message: 'Invalid password',
+      },
+    })
+    return
+  }
+
+  res.status(200).json({
+    token: generateToken(user.id),
+    id: user.id
+  })
+}
