@@ -127,6 +127,25 @@ export const login = async (req, res) => {
 
   res.status(200).json({
     token: generateToken(user.id),
-    id: user.id
+    id: user.id,
   })
 }
+
+export const getUserById = async (req, res) => {
+  const id = req.params.id
+
+  const user = await User.findOne({ where: { id: id } })
+
+  if (!user) {
+    res.status(404).json({
+      error: {
+        type: 'NotFound',
+        message: 'User not found',
+      },
+    })
+    return
+  }
+
+  res.status(200).json({ user })
+}
+
