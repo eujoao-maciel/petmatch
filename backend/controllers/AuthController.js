@@ -149,3 +149,6 @@ export const getUserById = async (req, res) => {
   res.status(200).json({ user })
 }
 
+export const updateUser = async (req, res) => {
+  res.send("ok")
+}
