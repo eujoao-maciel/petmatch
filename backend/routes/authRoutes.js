@@ -7,10 +7,11 @@ import {
 } from '../controllers/AuthController.js'
 
 import checkAuth from '../utils/checkAuth.js'
+import imageUpload from '../utils/imageUpload.js'
 
 const router = Router()
 
-router.post('/update/:id', checkAuth, updateUser)
+router.put('/update/:id', checkAuth, imageUpload.single("image"), updateUser)
 router.post('/register', register)
 router.post('/login', login)
 router.get('/:id', getUserById)

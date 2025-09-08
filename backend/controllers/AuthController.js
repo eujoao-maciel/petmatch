@@ -150,5 +150,49 @@ export const getUserById = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
-  res.send("ok")
+  const { id } = req.params
+  const { name, phone } = req.body
+
+  let profileImage = ''
+  if (req.file) {
+    profileImage = req.file.filename
+  }
+
+  const reqUser = req.user
+  const user = await User.findOne({ where: { id } })
+
+  if (name) {
+    user.name = name
+  }
+
+  if (phone) {
+    user.phone = phone
+  }
+
+  if (profileImage) {
+    user.profileImage = profileImage
+  }
+
+  try {
+    await User.update(
+      {
+        name: user.name,
+        phone: user.phone,
+        profileImage: user.profileImage,
+      },
+      { where: { id: user.id } }
+    )
+
+    res.status(200).json({
+      message: 'User updated successfully.',
+      data: { id: user.id, name: user.name, email: user.email },
+    })
+  } catch (err) {
+    res.status(500).json({
+      error: {
+        type: 'Internal error',
+        message: 'Internal server error: ' + err,
+      },
+    })
+  }
 }
