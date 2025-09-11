@@ -37,6 +37,6 @@ describe('GET / getuserbyid', async () => {
     const res = await request(app).get(`/auth/${id}`)
 
     expect(res.status).toBe(200)
-    expect(res.body).toHaveProperty("user")
+    expect(res.body).toHaveProperty('user')
   })
 })
