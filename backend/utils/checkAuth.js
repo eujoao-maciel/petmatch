@@ -7,8 +7,7 @@ const jwtSecret = process.env.MYSECRET
 
 const checkAuth = async (req, res, next) => {
   const authHeader = req.headers.authorization
-  console.log(authHeader.split(' ')[1])
-  console.log(jwtSecret)
+
   if (!authHeader) {
     res.status(401).json({
       error: {

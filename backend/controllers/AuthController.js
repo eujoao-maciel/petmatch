@@ -149,6 +149,11 @@ export const getUserById = async (req, res) => {
   res.status(200).json({ user })
 }
 
+export const getCurrentUser = async (req, res) => {
+  const reqUser = await req.user
+  res.status(200).json({ user: reqUser })
+}
+
 export const updateUser = async (req, res) => {
   const { id } = req.params
   const { name, phone } = req.body
